@@ -134,9 +134,14 @@ class AuthController extends Controller
                     if ($user->role != 1) {
                         Log::channel('infos')->info('Informacion: Un usuario inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
                         Auth::login($user);
+                        if (Auth::check($user)) {
+                            return response()->json([
+                                'message' => 'Usuario logeado'
+                            ],200);
+                        }
                         return response()->json([
-                            'message' => ' Usuario logeado con éxito'
-                        ],201);
+                            'error' => 'No se logea'
+                        ],400);
                     } else {
                         Log::channel('infos')->info('Informacion: Un usuario administrador esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
                         Auth::guard('web')->logout();

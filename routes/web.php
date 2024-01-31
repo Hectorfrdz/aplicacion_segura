@@ -34,5 +34,3 @@ Route::get('/verificarCodigo', function () {
     return view('verificarCodigo');
 })->name('verificarCodigo');
 
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
