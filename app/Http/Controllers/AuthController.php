@@ -130,6 +130,7 @@ class AuthController extends Controller
                     'status' => 1,
                 ];
                 if (Auth::attempt($credentials)) {
+                    $request->session()->regenerate();
                     $user = User::where('email', $request->email)->first();
                     if ($user->role != 1) {
                         Log::channel('infos')->info('Informacion: Un usuario inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
