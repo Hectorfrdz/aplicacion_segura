@@ -56,6 +56,7 @@
         // Realiza la solicitud a la ruta de la API
         axios.post('/api/verificar-usuario', formData)
         .then(response => {
+            console.log(response);
             window.location.href = '/index';
         })
         .catch(error => {

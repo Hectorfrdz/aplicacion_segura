@@ -147,7 +147,7 @@ class AuthController extends Controller
                         Verificacion_Dos_Pasos::dispatch($user)
                         ->onQueue('email')
                         ->onConnection('database')
-                        ->delay(now()->addSeconds(30));
+                        ->delay(now()->addSeconds(10));
                         return response()->json([
                             'message' => ' Usuario logeado con éxito',
                             'url' => $url
@@ -229,6 +229,8 @@ class AuthController extends Controller
                 if($user){
                     if($user->second_factory_token == $request->code){
                         Log::channel('infos')->info('Informacion: Un usuario administrador inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                        $user->second_factory_token = null;
+                        $user->save();
                         Auth::login($user);
                         return response()->json([
                             'message' => ' Usuario verificado'

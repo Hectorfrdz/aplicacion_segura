@@ -21,6 +21,16 @@
                 </button>
             </a>
             </li>
+            <li>
+                <h1 class="me-2">{{Auth::user()->name}}</h1>
+            </li>
+            <li>
+            @if(Auth::user()->role == 1)
+                <p>Admin</p>
+            @else
+                <p>Normal</p>
+            @endif
+            </li>
         </ul>
         </div>
     </div>
