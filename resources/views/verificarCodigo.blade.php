@@ -10,6 +10,7 @@
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6Le6G18pAAAAAAwGu5EtUDYnmMV4kC2DilVq38_E"></script>
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <title>Incio</title>
    
 </head>
@@ -65,7 +66,6 @@
             window.location.href = '/index';
         })
         .catch(error => {
-            console.log(error.response.status);
             if (error.response.status === 422) {
                  // Recibe los errores
                 const errors = error.response.data.error;

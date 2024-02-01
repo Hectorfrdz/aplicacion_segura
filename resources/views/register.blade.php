@@ -8,7 +8,7 @@
     <title>Incio</title>
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-   
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
     <div class="container mt-5">
@@ -20,7 +20,6 @@
                     <form method="POST" id="demo-form" >
                         @csrf
                         <!-- Campo de nombre -->
-                        <div id="error-container"></div>
                         <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">Nombre</label>
                             <div class="col-md-6">
@@ -62,6 +61,7 @@
                                 Registrarse
                             </button>  
                             </div>
+                            <div id="error-container"></div>
                         </div>
                     </form>
                 </div>
@@ -81,6 +81,10 @@
     function onSubmit(token) {
         // Obtén los datos del formulario
         const formData = new FormData(document.getElementById("demo-form"));
+        
+        // Limpia mensajes de error anteriores
+        const errorContainer = document.getElementById("error-container");
+            errorContainer.innerHTML = '';
 
         // Validar contraseñas
         const password = formData.get('password');
@@ -91,6 +95,9 @@
             document.getElementById('password-confirmation-error').innerText = 'Las contraseñas no coinciden.';
             document.getElementById('password-confirmation-error').style.display = 'block';
             return; // Detener el envío del formulario
+        } else {
+            // Limpiar mensaje de error si las contraseñas coinciden
+            document.getElementById('password-confirmation-error').style.display = 'none';
         }
 
         // Realiza la solicitud a la ruta de la API
@@ -99,46 +106,42 @@
             // Manejar respuesta exitosa
             console.log(response.data.message);
             // Redirigir a la página deseada (por ejemplo, /dashboard)
-            window.location.href = '/login';
+            window.location.href = '/';
         })
         .catch(error => {
-            // Restablecer mensaje de error de confirmación de contraseña
-            document.getElementById('password-confirmation-error').style.display = 'none';
-
-            // Mostrar mensajes de error generales
-            const generalErrorContainer = document.getElementById('general-error');
-            
-            if (generalErrorContainer) {
-                generalErrorContainer.remove();
-            }
-
+            // Muestra mensajes de error
             if (error.response.status === 422) {
-                // Errores de validación
+                // Recibe los errores
                 const errors = error.response.data.error;
-                Object.keys(errors).forEach(field => {
-                    // Muestra los mensajes de error en tu formulario
-                    const inputElement = document.getElementById(field);
-                    const errorContainer = document.createElement('div');
-                    errorContainer.className = 'alert alert-danger';
-                    errorContainer.innerHTML = errors[field][0];
-                    // Elimina mensajes de error previos
-                    const existingErrorContainer = inputElement.nextElementSibling;
-                    if (existingErrorContainer) {
-                        existingErrorContainer.remove();
+
+                for (const field in errors) {
+                    const errorMessages = errors[field];
+                    
+                    // Crea un contenedor para los mensajes de error de un campo
+                    const fieldErrorContainer = document.createElement('div');
+                    fieldErrorContainer.className = 'field-error-container';
+
+                    // Itera sobre los mensajes de error y crea elementos span para cada uno
+                    for (const errorMessage of errorMessages) {
+                        const errorSpan = document.createElement('span');
+                        errorSpan.className = 'text-danger';
+                        errorSpan.textContent = errorMessage;
+
+                        // Agrega el span al contenedor de errores del campo
+                        fieldErrorContainer.appendChild(errorSpan);
                     }
-                    // Inserta el mensaje de error después del campo
-                    inputElement.parentNode.insertBefore(errorContainer, inputElement.nextSibling);
-                });
+
+                    // Agrega el contenedor de errores del campo al contenedor principal
+                    errorContainer.appendChild(fieldErrorContainer);
+                }
             } else {
                 // Recibe los errores;
-                const errorContainer = document.getElementById("error-container");
-                // Limpia mensajes de error anteriores
-                errorContainer.innerHTML = '';
-                // Muestra los mensajes
                 const errorSpan = document.createElement('span');
                 errorSpan.className = 'text-danger';
                 errorSpan.textContent = error.response.data.error;
-                errorContainer.appendChild(errorSpan);    
+
+                // Inserta el mensaje de error en el contenedor principal
+                errorContainer.appendChild(errorSpan);
             }
         });
     }

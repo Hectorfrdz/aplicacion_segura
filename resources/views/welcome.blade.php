@@ -8,6 +8,7 @@
     <title>Incio</title>
     <!-- Bootstrap -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
    
 </head>
 <body>
@@ -21,7 +22,6 @@
                         <form method="POST" id="demo-form" action="/api/verificar-usuario">
                             @csrf
                             <div class="form-group row">
-                            <div id="error-container"></div>
                                 <label for="email" class="col-md-4 col-form-label text-md-right">Correo Electrónico</label>
                                 <div class="col-md-6">
                                     <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required autofocus>
@@ -44,6 +44,7 @@
                                     Iniciar Sesion
                                 </button>  
                                 </div>
+                                <div id="error-container"></div>
                             </div>
                         </form>
                     </div>
@@ -61,11 +62,15 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     function onSubmit(token) {
-        // Se Obtienen los datos del formulario
-        const formData = new FormData(document.getElementById("demo-form"));
+    // Se obtienen los datos del formulario
+    const formData = new FormData(document.getElementById("demo-form"));
 
-        // Realiza la solicitud a la ruta de la API
-        axios.post('api/iniciar-sesion', formData)
+    // Se limpian los mensajes de error anteriores
+    const errorContainer = document.getElementById("error-container");
+    errorContainer.innerHTML = '';
+
+    // Realiza la solicitud a la ruta de la API
+    axios.post('api/iniciar-sesion', formData)
         .then(response => {
             // Redireccionar al usuario
             if (response.data.url) {
@@ -76,33 +81,42 @@
             }
         })
         .catch(error => {
-            // Manejar errores de la API
+            // Limpia mensajes de error anteriores
+            const errorContainer = document.getElementById("error-container");
+            errorContainer.innerHTML = '';
+
+            // Muestra mensajes de error
             if (error.response.status === 422) {
-                // Errores de validación
+                // Recibe los errores
                 const errors = error.response.data.error;
-                Object.keys(errors).forEach(field => {
-                    // Muestra los mensajes de error en tu formulario
-                    const inputElement = document.getElementById(field);
-                    const errorContainer = document.createElement('div');
-                    errorContainer.className = 'alert alert-danger';
-                    errorContainer.innerHTML = errors[field][0];
-                    // Elimina mensajes de error previos
-                    const existingErrorContainer = inputElement.nextElementSibling;
-                    if (existingErrorContainer) {
-                        existingErrorContainer.remove();
+
+                for (const field in errors) {
+                    const errorMessages = errors[field];
+                    
+                    // Crea un contenedor para los mensajes de error de un campo
+                    const fieldErrorContainer = document.createElement('div');
+                    fieldErrorContainer.className = 'field-error-container';
+
+                    // Itera sobre los mensajes de error y crea elementos span para cada uno
+                    for (const errorMessage of errorMessages) {
+                        const errorSpan = document.createElement('span');
+                        errorSpan.className = 'text-danger';
+                        errorSpan.textContent = errorMessage;
+
+                        // Agrega el span al contenedor de errores del campo
+                        fieldErrorContainer.appendChild(errorSpan);
                     }
-                    // Inserta el mensaje de error después del campo
-                    inputElement.parentNode.insertBefore(errorContainer, inputElement.nextSibling);
-                });
+
+                    // Agrega el contenedor de errores del campo al contenedor principal
+                    errorContainer.appendChild(fieldErrorContainer);
+                }
             } else {
                 // Recibe los errores;
-                const errorContainer = document.getElementById("error-container");
-                // Limpia mensajes de error anteriores
-                errorContainer.innerHTML = '';
-                // Muestra los mensajes
                 const errorSpan = document.createElement('span');
                 errorSpan.className = 'text-danger';
                 errorSpan.textContent = error.response.data.error;
+
+                // Inserta el mensaje de error en el contenedor principal
                 errorContainer.appendChild(errorSpan);
             }
         });
