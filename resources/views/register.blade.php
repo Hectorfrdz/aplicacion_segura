@@ -103,9 +103,7 @@
         // Realiza la solicitud a la ruta de la API
         axios.post('/api/registro-usuario', formData)
         .then(response => {
-            // Manejar respuesta exitosa
-            console.log(response.data.message);
-            // Redirigir a la página deseada (por ejemplo, /dashboard)
+            // Redirigir al login
             window.location.href = '/';
         })
         .catch(error => {

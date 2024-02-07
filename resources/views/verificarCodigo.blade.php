@@ -1,5 +1,3 @@
-<!-- resources/views/codigo/ingresar.blade.php -->
-
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -45,6 +43,11 @@
                                 </div>
                             </div>
                         </form>
+                        <br>
+                        <div id="app" style="display: flex;" class="row mb-0">
+                            <button id="reenviar-btn" class="btn btn-warning col-md-6 offset-md-3" data-id="{{ request()->query('user') }}" disabled>Reenviar código</button>
+                            <p class="col-md-2"><span id="countdown">50</span></p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -62,7 +65,7 @@
         // Realiza la solicitud a la ruta de la API
         axios.post('/api/verificar-usuario', formData)
         .then(response => {
-            console.log(response);
+            //redirigir al inicio
             window.location.href = '/index';
         })
         .catch(error => {
@@ -95,6 +98,50 @@
             }
         });
     }
+
+    // Función para iniciar el contador y manejar el reenvío del código
+    function iniciarContadorReenvio() {
+        let secondsLeft = 50; // Cambiar a 50 segundos si se desea
+        const countdownElement = document.getElementById('countdown');
+        const reenviarBtn = document.getElementById('reenviar-btn');
+
+        let countdownInterval = setInterval(() => {
+            secondsLeft--;
+            countdownElement.textContent = secondsLeft;
+
+            if (secondsLeft === 0) {
+                clearInterval(countdownInterval);
+                reenviarBtn.disabled = false;
+            }
+        }, 1000);
+
+        // Redirigir a la ruta "reenviarcodigo" con el ID del usuario cuando se hace clic en el botón "Reenviar código"
+        reenviarBtn.addEventListener('click', function() {
+            const userId = this.getAttribute('data-id');
+            axios.post('/api/reenviar-codigo/' + userId)
+            .then(response => {
+                countdownElement.textContent = secondsLeft; // Actualizar el contador en la interfaz de usuario
+                reenviarBtn.disabled = true; // Deshabilitar el botón hasta que el contador vuelva a cero
+                clearInterval(countdownInterval); // Limpiar el intervalo anterior
+                iniciarContadorReenvio(); // Volver a iniciar el contador
+            })
+            .catch(error => {
+                // Recibe los errores;
+                const errorContainer = document.getElementById("error-container");
+                // Limpia mensajes de error anteriores
+                errorContainer.innerHTML = '';
+                // Muestra los mensajes
+                const errorSpan = document.createElement('span');
+                errorSpan.className = 'text-danger';
+                errorSpan.textContent = error.response.data.error;
+                errorContainer.appendChild(errorSpan);
+            });
+        });
+    }
+
+    // Llama a la función para iniciar el contador y manejar el reenvío del código
+    iniciarContadorReenvio();
+
 </script>
 </body>
 </html>

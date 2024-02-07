@@ -4,15 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Jobs\Verificacion_Dos_Pasos;
 use App\Jobs\Verificar_Correo;
-use App\Mail\ActivarUsuario;
-use App\Mail\VerificarUsuario;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 
@@ -34,8 +31,8 @@ class AuthController extends Controller
                 $request->all(),
                 [
                     "name" => "required|min:3|max:50",
-                    "email" => "required|email|unique:users,email",
-                    "password" => "required|min:8|max:25",
+                    "email" => "required|email|unique:users,email|max:50",
+                    "password" => "required|min:8|max:50",
                 ],
                 [
                     'name.required' => 'El nombre es requerido.',
@@ -73,7 +70,7 @@ class AuthController extends Controller
                 if($user->save()){
                     Log::channel('infos')->info('Informacion: Un usuario se registro' . ' Usuario: '. $user . ' Fecha:('.$time.')');
                     // Se envia el email
-                    $url = URL::temporarySignedRoute('verificar-email',now()->addMinutes(5),
+                    $url = URL::temporarySignedRoute('verificar-email',now()->addDays(1),
                     ['id'=>$user->id]);
                     // Mail::to($user->email)->send(new ActivarUsuario($user,$url));
                     Verificar_Correo::dispatch($user,$url)
@@ -109,8 +106,8 @@ class AuthController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'email' => 'required|email',
-                    'password' => 'required|min:8|max:25'
+                    'email' => 'required|email|max:50',
+                    'password' => 'required|min:8|max:50'
                 ],
                 [
                     'email.required' => 'El email es requerido',
@@ -205,7 +202,7 @@ class AuthController extends Controller
         ->onQueue('email')
         ->onConnection('database')
         ->delay(now()->addSeconds(30));
-        
+
         
         return View('welcome');
     }
@@ -221,10 +218,11 @@ class AuthController extends Controller
             $validator = Validator::make(
                 $request->all(),
                 [
-                    'code' => 'required',
+                    'code' => 'required|max:6',
                 ],
                 [
                     'code.required' => 'El codigo es requerido',
+                    'code.max' => 'Codigo incorrecto',
                 ]
             );
             if($validator->fails()) {
@@ -259,6 +257,26 @@ class AuthController extends Controller
             return response()->json([
                 'error' => 'No eres humano'
             ], 400);
+        }
+    }
+
+    public function reenviarCodigo($id){
+        $user = User::find($id);
+        if($user){
+            $verificationCode = mt_rand(100000, 999999);
+            $user->second_factory_token = $verificationCode; 
+            $user->save();
+            Verificacion_Dos_Pasos::dispatch($user)
+            ->onQueue('email')
+            ->onConnection('database')
+            ->delay(now()->addSeconds(10));
+            return response()->json([
+                'message' => 'Codigo enviado correctamente'
+            ],201);
+        } else {
+            return response()->json([
+                'error' => 'Usuario no encontrado'
+            ],400);
         }
     }
 }

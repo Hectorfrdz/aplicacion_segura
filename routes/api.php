@@ -22,4 +22,5 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/verificar-email','verificarEmail')->name('verificar-email');
     Route::post('/verificar-usuario','verificarUsuario')->name('verificar-usuario');
     Route::get('/reenviar-correo/{id}')->name('reenviar-correo');
+    Route::post('/reenviar-codigo/{id}','reenviarCodigo')->name('reenviar-codigo')->where('id', '[0-9]+');
 });
