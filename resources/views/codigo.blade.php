@@ -17,7 +17,7 @@
                     </div>
                     <div class="card-body">
                         <p>Codigo de verificacion:</p>
-                        <h2 class="text-center text-danger">{{ $code }}</h2>
+                        <h2 class="text-center text-danger">{{ $verificationCode }}</h2>
                     </div>
                 </div>
             </div>

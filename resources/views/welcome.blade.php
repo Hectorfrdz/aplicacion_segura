@@ -81,6 +81,7 @@
             }
         })
         .catch(error => {
+            console.log(error);
             // Limpia mensajes de error anteriores
             const errorContainer = document.getElementById("error-container");
             errorContainer.innerHTML = '';

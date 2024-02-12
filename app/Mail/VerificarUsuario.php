@@ -17,15 +17,17 @@ class VerificarUsuario extends Mailable
     public string $code;
     public string $id;
     public string $email;
+    public $verificationCode;
     /**
      * Create a new message instance.
      */
-    public function __construct($user_data)
+    public function __construct($user_data,$verificationCode)
     {
         $this->user_data = $user_data;
         $this->code = $user_data->second_factory_token;
         $this->id = $user_data->id;
         $this->email = $user_data->email;
+        $this->verificationCode = $verificationCode;
     }
 
     

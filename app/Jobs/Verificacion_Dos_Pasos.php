@@ -15,13 +15,14 @@ use Illuminate\Support\Facades\Mail;
 class Verificacion_Dos_Pasos implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    public $user;
+    public $user, $verificationCode;
     /**
      * Create a new job instance.
      */
-    public function __construct(User $user)
+    public function __construct(User $user, $verificationCode)
     {
         $this->user=$user;
+        $this->verificationCode=$verificationCode;
     }
 
     /**
@@ -30,6 +31,6 @@ class Verificacion_Dos_Pasos implements ShouldQueue
     public function handle(): void
     {
         Log::channel('infos')->info('Informacion: Un usuario administrador inicio sesion ' . 'Usuario: '. $this->user);
-        Mail::to($this->user->email)->send(new VerificarUsuario($this->user));
+        Mail::to($this->user->email)->send(new VerificarUsuario($this->user,$this->verificationCode));
     }
 }

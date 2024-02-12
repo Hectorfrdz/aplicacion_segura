@@ -121,45 +121,46 @@ class AuthController extends Controller
                 Log::channel('errors')->info('Informacion: Alguien intento iniciar sesion Error: validaciones' . ' Fecha:('.$time.')');
                 return response()->json(['error' => $validator->errors()], 422);
             } else {
-                $credentials = [
-                    'email' => $request->email,
-                    'password' => $request->password,
-                    'status' => 1,
-                ];
-                if (Auth::attempt($credentials)) {
-                    $request->session()->regenerate();
-                    $user = User::where('email', $request->email)->first();
-                    if ($user->role != 1) {
-                        Log::channel('infos')->info('Informacion: Un usuario inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
-                        Auth::login($user);
-                        if (Auth::check($user)) {
+                $user = User::where('email','=',$request->email)->first();
+                if($user && Hash::check($request->password,$user->password)){
+                    if($user->status != 0){
+                        if($user->role != 1){
+                            Auth::login($user);
+                            $request->session()->regenerate();
+                            $user = User::where('email', $request->email)->first();
+                            Log::channel('infos')->info('Informacion: Un usuario inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                            if (Auth::check($user)) {
+                                return response()->json([
+                                    'message' => 'Usuario logeado'
+                                ],200);
+                            } else {
+                                return response()->json([
+                                    'error' => 'No se logea'
+                                ],400);
+                            }
+                        } else {
+                            Log::channel('infos')->info('Informacion: Un usuario administrador esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                            $verificationCode = mt_rand(100000, 999999);
+                            $user->second_factory_token = Hash::make($verificationCode); 
+                            $user->save();
+                            $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
+                            Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
+                            ->onQueue('email')
+                            ->onConnection('database')
+                            ->delay(now()->addSeconds(10));
                             return response()->json([
-                                'message' => 'Usuario logeado'
-                            ],200);
+                                'message' => ' Usuario logeado con éxito',
+                                'url' => $url
+                            ],201);
                         }
-                        return response()->json([
-                            'error' => 'No se logea'
-                        ],400);
                     } else {
-                        Log::channel('infos')->info('Informacion: Un usuario administrador esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
-                        Auth::guard('web')->logout();
-                        $verificationCode = mt_rand(100000, 999999);
-                        $user->second_factory_token = $verificationCode; 
-                        $user->save();
-                        $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
-                        Verificacion_Dos_Pasos::dispatch($user)
-                        ->onQueue('email')
-                        ->onConnection('database')
-                        ->delay(now()->addSeconds(10));
                         return response()->json([
-                            'message' => ' Usuario logeado con éxito',
-                            'url' => $url
-                        ],201);
+                            'error' => 'Cuenta desactivada'
+                        ], 400);
                     }
                 } else {
-                    Log::channel('errors')->info('Informacion: Alguien intento iniciar sesion Error: Credenciales incorrectas o cuenta desactivada' . ' Fecha:('.$time.')');
                     return response()->json([
-                        'error' => 'Credenciales incorrectas o Cuenta desactivada'
+                        'error' => 'Credenciales incorrectas'
                     ], 400);
                 }
             }
@@ -231,7 +232,7 @@ class AuthController extends Controller
             } else {
                 $user = User::find($request->id_user);
                 if($user){
-                    if($user->second_factory_token == $request->code){
+                    if(Hash::check($request->code,$user->second_factory_token)){
                         Log::channel('infos')->info('Informacion: Un usuario administrador inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
                         $user->second_factory_token = null;
                         $user->save();
