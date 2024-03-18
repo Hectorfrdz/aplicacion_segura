@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Jobs\Verificacion_Dos_Pasos;
+use App\Jobs\Verificar_Correo;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -13,6 +15,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->job(Verificacion_Dos_Pasos::class)->everyMinute();
+        $schedule->job(Verificar_Correo::class)->everyMinute();
     }
 
     /**
