@@ -79,9 +79,16 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     function onSubmit(token) {
+
+        // Obtener el token CSRF del formulario0
+        const csrfToken = document.querySelector('input[name="_token"]').value;
+
         // Obtén los datos del formulario
         const formData = new FormData(document.getElementById("demo-form"));
         
+        // Agregar el token CSRF a los datos del formulario
+        formData.append('_token', csrfToken);
+
         // Limpia mensajes de error anteriores
         const errorContainer = document.getElementById("error-container");
             errorContainer.innerHTML = '';
