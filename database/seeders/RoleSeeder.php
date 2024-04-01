@@ -17,7 +17,10 @@ class RoleSeeder extends Seeder
             'name' => 'administrator'
         ]);
         Role::create([
-            'name' => 'normal'
+            'name' => 'coordinator'
+        ]);
+        Role::create([
+            'name' => 'guest'
         ]);
     }
 }

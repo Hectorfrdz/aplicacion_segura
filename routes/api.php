@@ -24,7 +24,3 @@ Route::controller(AuthController::class)->group(function () {
     Route::get('/reenviar-correo/{id}')->name('reenviar-correo');
     Route::post('/reenviar-codigo/{id}','reenviarCodigo')->name('reenviar-codigo')->where('id', '[0-9]+');
 });
-
-Route::controller(AuthController::class)->group(function(){
-
-});
