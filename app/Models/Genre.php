@@ -13,7 +13,7 @@ class Genre extends Model
 
     public function books()
     {
-        return $this->hasMany(Book::class, 'genre');
+        return $this->hasMany(Book::class);
     }
 
     protected static function boot()
