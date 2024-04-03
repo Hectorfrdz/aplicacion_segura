@@ -82,7 +82,7 @@ class AuthorController extends Controller
     }
     public function readAuthors(){
         $authors = Author::simplePaginate(10);
-        return view('authors', compact('authors'));
+        return $authors;
     }
     public function readAuthor($id){
         $author = Author::find($id);

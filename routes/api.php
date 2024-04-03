@@ -32,42 +32,41 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 Route::controller(AuthorController::class)->group(function(){
-    Route::get('read-authors','readAuthors')->name('read-authors');
-    Route::get('read-author/{id}','readAuthor')->name('read-author');
-    Route::post('create-author','createAuthor')->name('create-author');
-    Route::put('update-author/{id}','updateAuthor')->name('update-author');
-    Route::delete('delete-author/{id}','deleteAuthor')->name('delete-author');
-});
+    Route::get('read-authors','readAuthors')->name('read-authors')->middleware("checkRole:1,2,3");
+    Route::get('read-author/{id}','readAuthor')->name('read-author')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+    Route::post('create-author','createAuthor')->name('create-author')->middleware("checkRole:1,2");
+    Route::put('update-author/{id}','updateAuthor')->name('update-author')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+    Route::delete('delete-author/{id}','deleteAuthor')->name('delete-author')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+})->middleware('auth:sanctum');
 
 Route::controller(GenreController::class)->group(function(){
-    Route::get('read-genres','readGenres')->name('read-genres');
-    Route::get('read-genre/{id}','readGenre')->name('read-genre');
-    Route::post('create-genre','createGenre')->name('create-genre');
-    Route::put('update-genre/{id}','updateGenre')->name('update-genre');
-    Route::delete('delete-genre/{id}','deleteGenre')->name('delete-genre');
-});
+    Route::get('read-genres','readGenres')->name('read-genres')->middleware("checkRole:1,2,3");
+    Route::get('read-genre/{id}','readGenre')->name('read-genre')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+    Route::post('create-genre','createGenre')->name('create-genre')->middleware("checkRole:1,2");
+    Route::put('update-genre/{id}','updateGenre')->name('update-genre')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+    Route::delete('delete-genre/{id}','deleteGenre')->name('delete-genre')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+})->middleware('auth:sanctum');
 
 Route::controller(EditorialController::class)->group(function(){
-    Route::get('read-editorials','readEditorials')->name('read-editorials');
-    Route::get('read-editorial/{id}','readEditorial')->name('read-editorial');
-    Route::post('create-editorial','createEditorial')->name('create-editorial');
-    Route::put('update-editorial/{id}','updateEditorial')->name('update-editorial');
-    Route::delete('delete-editorial/{id}','deleteEditorial')->name('delete-editorial');
-});
+    Route::get('read-editorials','readEditorials')->name('read-editorials')->middleware("checkRole:1,2,3");
+    Route::get('read-editorial/{id}','readEditorial')->name('read-editorial')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+    Route::post('create-editorial','createEditorial')->name('create-editorial')->middleware("checkRole:1,2");
+    Route::put('update-editorial/{id}','updateEditorial')->name('update-editorial')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+    Route::delete('delete-editorial/{id}','deleteEditorial')->name('delete-editorial')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+})->middleware('auth:sanctum');
 
 Route::controller(BookController::class)->group(function(){
-    Route::get('read-books','readBooks')->name('read-books');
-    Route::get('read-book/{id}','readBook')->name('read-book');
-    Route::post('create-book','createBook')->name('create-book');
-    Route::put('update-book/{id}','updateBook')->name('update-book');
-    Route::delete('delete-book/{id}','deleteBook')->name('delete-book');
-});
+    Route::get('read-books','readBooks')->name('read-books')->middleware("checkRole:1,2,3");
+    Route::get('read-book/{id}','readBook')->name('read-book')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+    Route::post('create-book','createBook')->name('create-book')->middleware("checkRole:1,2");
+    Route::put('update-book/{id}','updateBook')->name('update-book')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+    Route::delete('delete-book/{id}','deleteBook')->name('delete-book')->where('id', '[0-9]+')->middleware("checkRole:1,2");
+})->middleware('auth:sanctum');
 
 Route::controller(UserController::class)->group(function(){
-    Route::get('read-users','readUsers')->name('read-users');
-    Route::get('read-user/{id}','readUser')->name('read-user');
-    // Route::post('create-book','createBook')->name('create-book');
-    // Route::put('update-book/{id}','updateBook')->name('update-book');
-    // Route::delete('delete-book/{id}','deleteBook')->name('delete-book');
-});
-// ->middleware('auth:sanctum')->middleware("checkRole:1,2");0.
+    Route::get('read-users','readUsers')->name('read-users')->middleware("checkRole:1");
+    Route::get('read-user/{id}','readUser')->name('read-user')->where('id', '[0-9]+')->middleware("checkRole:1");
+    Route::post('create-user','createUser')->name('create-user')->middleware("checkRole:1");
+    Route::put('update-user/{id}','updateUser')->name('update-user')->where('id', '[0-9]+')->middleware("checkRole:1");
+    Route::delete('delete-user/{id}','deleteUser')->name('delete-user')->where('id', '[0-9]+')->middleware("checkRole:1");
+})->middleware('auth:sanctum');

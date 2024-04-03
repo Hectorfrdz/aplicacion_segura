@@ -29,7 +29,7 @@
                     <th>Autor</th>
                     <th>Género</th>
                     <th>Libro</th>
-                    <th>Acciones</th>
+                    <th @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>Acciones</th>
                 </tr>
             </thead>
             @if(isset($books) && $books->count() > 0)
@@ -43,10 +43,10 @@
                         <td>{{ $book->editorial->name }}</td>
                         <td>
                             <button type="button" class="btn btn-warning editar-Book-btn" data-toggle="modal" data-target="#editarLibroModal" data-id="{{ $book->id }}" 
-                            data-name="{{ $book->name }}" data-author="{{ $book->author->id }}" data-editorial="{{ $book->editorial->id }}" data-genre="{{ $book->genre->id }}" data-isbn="{{ $book->ISBN }}" @if(Auth::user()->role != 1 || Auth::user()->role != 2) style="display: none;" @endif>
+                            data-name="{{ $book->name }}" data-author="{{ $book->author->id }}" data-editorial="{{ $book->editorial->id }}" data-genre="{{ $book->genre->id }}" data-isbn="{{ $book->ISBN }}" @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                                 Editar
                             </button>
-                            <button type="button" class="btn btn-danger eliminar-Book-btn" data-toggle="modal" data-target="#confirmarEliminarModal" data-id="{{ $book->id }}" @if(Auth::user()->role != 1 || Auth::user()->role != 2) style="display: none;" @endif>
+                            <button type="button" class="btn btn-danger eliminar-Book-btn" data-toggle="modal" data-target="#confirmarEliminarModal" data-id="{{ $book->id }}" @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                                 Eliminar
                             </button>
                         </td>

@@ -17,7 +17,7 @@
                 <h1>Lista de Editoriales</h1>
             </div>
             <div class="col-md-6 text-right">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarEditorialModal">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarEditorialModal" @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                     Agregar Editorial
                 </button>
             </div>
@@ -29,7 +29,7 @@
                     <th>Telefono</th>
                     <th>Correo</th>
                     <th>Direccion</th>
-                    <th>Acciones</th>
+                    <th @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,10 +41,12 @@
                         <td>{{ $editorial->direction }}</td>
                         <td>
                             <button type="button" class="btn btn-warning editar-Editorial-btn" data-toggle="modal" data-target="#editarEditorialModal" data-id="{{ $editorial->id }}" data-name="{{ $editorial->name }}"
-                            data-direction="{{ $editorial->direction }}" data-phone="{{ $editorial->phone }}" data-email="{{ $editorial->email }}">
+                            data-direction="{{ $editorial->direction }}" data-phone="{{ $editorial->phone }}" data-email="{{ $editorial->email }}"
+                            @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                                 Editar
                             </button>
-                            <button type="button" class="btn btn-danger eliminar-Editorial-btn" data-toggle="modal" data-target="#confirmarEliminarModal" data-id="{{ $editorial->id }}">
+                            <button type="button" class="btn btn-danger eliminar-Editorial-btn" data-toggle="modal" data-target="#confirmarEliminarModal" data-id="{{ $editorial->id }}"
+                            @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                                 Eliminar
                             </button>
                         </td>

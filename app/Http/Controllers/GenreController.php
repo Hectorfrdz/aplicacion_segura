@@ -72,7 +72,7 @@ class GenreController extends Controller
     }
     public function readGenres(){
         $genres = Genre::simplePaginate(10);
-        return view('genres', compact('genres'));
+        return $genres;
     }
     public function readGenre($id){
         $genre = Genre::find($id);

@@ -17,7 +17,7 @@
                 <h1>Lista de Autores</h1>
             </div>
             <div class="col-md-6 text-right">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarLibroModal">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarLibroModal" @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                     Agregar Autor
                 </button>
             </div>
@@ -26,7 +26,7 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Acciones</th>
+                    <th @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,10 +34,12 @@
                     <tr>
                         <td>{{ $author->name }}</td>
                         <td>
-                            <button type="button" class="btn btn-warning editar-libro-btn" data-toggle="modal" data-target="#editarAutorModal" data-id="{{ $author->id }}" data-name="{{ $author->name }}">
+                            <button type="button" class="btn btn-warning editar-libro-btn" data-toggle="modal" data-target="#editarAutorModal" data-id="{{ $author->id }}" data-name="{{ $author->name }}"
+                            @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                                 Editar
                             </button>
-                            <button type="button" class="btn btn-danger eliminar-libro-btn" data-toggle="modal" data-target="#confirmarEliminarModal" data-id="{{ $author->id }}">
+                            <button type="button" class="btn btn-danger eliminar-libro-btn" data-toggle="modal" data-target="#confirmarEliminarModal" data-id="{{ $author->id }}" 
+                            @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                                 Eliminar
                             </button>
                         </td>

@@ -108,10 +108,7 @@ class BookController extends Controller
     public function readBooks()
     {
         $books = Book::with('genre', 'editorial', 'author')->simplePaginate(10);
-        $authors = Author::all();
-        $editorials = Editorial::all();
-        $genres = Genre::all();
-        return view('books', compact('books','authors','editorials','genres'));
+        return $books;
     }
     public function readBook($id)
     {

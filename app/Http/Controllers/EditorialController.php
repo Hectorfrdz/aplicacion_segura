@@ -101,7 +101,7 @@ class EditorialController extends Controller
     }
     public function readEditorials(){
         $editorials = Editorial::simplePaginate(10);
-        return view('editorials', compact('editorials'));
+        return $editorials;
     }
     public function readEditorial($id){
         $editorial = Editorial::find($id);

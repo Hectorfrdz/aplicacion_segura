@@ -17,7 +17,7 @@
                 <h1>Lista de Generos</h1>
             </div>
             <div class="col-md-6 text-right">
-                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarGeneroModal">
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#agregarGeneroModal" @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                     Agregar Genero
                 </button>
             </div>
@@ -26,7 +26,7 @@
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Acciones</th>
+                    <th @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,10 +34,12 @@
                     <tr>
                         <td>{{ $genre->name }}</td>
                         <td>
-                            <button type="button" class="btn btn-warning editar-Genero-btn" data-toggle="modal" data-target="#editarGeneroModal" data-id="{{ $genre->id }}" data-name="{{ $genre->name }}">
+                            <button type="button" class="btn btn-warning editar-Genero-btn" data-toggle="modal" data-target="#editarGeneroModal" data-id="{{ $genre->id }}" data-name="{{ $genre->name }}"
+                            @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                                 Editar
                             </button>
-                            <button type="button" class="btn btn-danger eliminar-Genero-btn" data-toggle="modal" data-target="#confirmarEliminarModal" data-id="{{ $genre->id }}">
+                            <button type="button" class="btn btn-danger eliminar-Genero-btn" data-toggle="modal" data-target="#confirmarEliminarModal" data-id="{{ $genre->id }}"
+                            @if(Auth::user()->role != 1 && Auth::user()->role != 2) style="display: none;" @endif>
                                 Eliminar
                             </button>
                         </td>

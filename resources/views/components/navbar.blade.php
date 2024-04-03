@@ -10,42 +10,44 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Inicio</a>
+        <a class="navbar-brand" href="/index">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ml-auto">
-            <li>
-                <a class="nav-link" href="{{ route('read-user', ['id' => Auth::user()->id]) }}">{{ Auth::user()->name }}</a>
-            </li>
-            @if(Auth::user()->role == 1)
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link">{{ Auth::user()->name }}</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                @if(Auth::user()->role == 1)
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('users') }}">Usuarios</a>
+                </li>
+                @endif
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('books') }}">Libros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('genres') }}">Géneros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('authors') }}">Autores</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('editorials') }}">Editoriales</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
             <li class="nav-item">
-                <a class="nav-link" href="{{ route('read-users') }}">Usuarios</a>
-            </li>
-            @endif
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('read-books') }}">Libros</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('read-genres') }}">Géneros</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('read-authors') }}">Autores</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('read-editorials') }}">Editoriales</a>
-            </li>
-        </ul>
-        <ul class="navbar-nav ml-auto">
-        <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{{ route('logout') }}">
-                    <button type="button" class="btn btn-outline-primary me-2">
-                        Salir
-                    </button>
-                </a>
-            </li>
-        </ul>
+                    <a class="nav-link active" aria-current="page" href="{{ route('logout') }}">
+                        <button type="button" class="btn btn-outline-primary me-2">
+                            Salir
+                        </button>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
     </nav>

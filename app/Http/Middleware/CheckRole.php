@@ -16,7 +16,7 @@ class CheckRole
     public function handle(Request $request, Closure $next, ...$allowedRoles): Response
     {
         // Obtener el rol del usuario
-        $userRole = auth()->user()->rol_id;
+        $userRole = auth()->user()->role;
 
         // Verificar si el rol del usuario está entre los roles permitidos
         if (in_array($userRole, $allowedRoles)) {
@@ -25,6 +25,6 @@ class CheckRole
         }
 
         // Si el rol no está entre los permitidos, mostrar error de acceso denegado
-        return response()->json(['error' => "Acceso denegado"], 400);
+        return redirect('/index');
     }
 }
