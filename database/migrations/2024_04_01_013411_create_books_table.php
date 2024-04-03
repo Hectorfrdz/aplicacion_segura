@@ -14,16 +14,16 @@ return new class extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->id();
             $table->string('name',50);
-            $table->string('ISBN', 13);
-            $table->unsignedBigInteger('genre');
-            $table->unsignedBigInteger('editorial');
-            $table->unsignedBigInteger('author');
+            $table->string('ISBN', 13)->unique();
+            $table->unsignedBigInteger('genre_id')->default(1)->onDelete('cascade');
+            $table->unsignedBigInteger('editorial_id')->default(1)->onDelete('cascade');
+            $table->unsignedBigInteger('author_id')->default(1)->onDelete('cascade');
             $table->timestamps();
 
             //Foreign Keys
-            $table->foreign('genre')->references('id')->on('genres');
-            $table->foreign('editorial')->references('id')->on('editorials');
-            $table->foreign('author')->references('id')->on('authors');
+            $table->foreign('genre_id')->references('id')->on('genres');
+            $table->foreign('editorial_id')->references('id')->on('editorials');
+            $table->foreign('author_id')->references('id')->on('authors');
         });
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\Verificacion_Dos_Pasos;
+use App\Jobs\verificacion_dos_pasos_admin;
 use App\Jobs\Verificar_Correo;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -124,35 +125,39 @@ class AuthController extends Controller
                 $user = User::where('email','=',$request->email)->first();
                 if($user && Hash::check($request->password,$user->password)){
                     if($user->status != 0){
-                        if($user->role != 1){
-                            Auth::login($user);
-                            $request->session()->regenerate();
-                            $user = User::where('email', $request->email)->first();
-                            Log::channel('infos')->info('Informacion: Un usuario inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
-                            if (Auth::check($user)) {
-                                return response()->json([
-                                    'message' => 'Usuario logeado'
-                                ],200);
-                            } else {
-                                return response()->json([
-                                    'error' => 'No se logea'
-                                ],400);
-                            }
-                        } else {
-                            Log::channel('infos')->info('Informacion: Un usuario administrador esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
-                            $verificationCode = mt_rand(100000, 999999);
-                            $user->second_factory_token = Hash::make($verificationCode); 
-                            $user->save();
-                            $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
-                            Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
-                            ->onQueue('email')
-                            ->onConnection('database')
-                            ->delay(now()->addSeconds(10));
-                            return response()->json([
-                                'message' => ' Usuario logeado con éxito',
-                                'url' => $url
-                            ],201);
-                        }
+                        $verificationCode = mt_rand(100000, 999999);
+                        $user->second_factory_token = Hash::make($verificationCode); 
+                        $user->save();
+                        $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
+                        Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
+                        ->onQueue('email')
+                        ->onConnection('database')
+                        ->delay(now()->addSeconds(10));
+                        // if($user->role != 1){
+                        //     Log::channel('infos')->info('Informacion: Un usuario esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                        //     $verificationCode = mt_rand(100000, 999999);
+                        //     $user->second_factory_token = Hash::make($verificationCode); 
+                        //     $user->save();
+                        //     $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
+                        //     Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
+                        //     ->onQueue('email')
+                        //     ->onConnection('database')
+                        //     ->delay(now()->addSeconds(10));
+                        // } else {
+                        //     Log::channel('infos')->info('Informacion: Un usuario administrador esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                        //     $verificationCode = mt_rand(100000, 999999);
+                        //     $user->second_factory_token_admin = Hash::make($verificationCode); 
+                        //     $user->save();
+                        //     $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
+                        //     verificacion_dos_pasos_admin::dispatch($user,$verificationCode)
+                        //     ->onQueue('email')
+                        //     ->onConnection('database')
+                        //     ->delay(now()->addSeconds(10));
+                        // }
+                        return response()->json([
+                            'message' => ' Usuario logeado con éxito',
+                            'url' => $url
+                        ],201);
                     } else {
                         return response()->json([
                             'error' => 'Cuenta desactivada'
@@ -278,6 +283,52 @@ class AuthController extends Controller
             return response()->json([
                 'error' => 'Usuario no encontrado'
             ],400);
+        }
+    }
+
+    public function codigoAdmin(Request $request){
+        $time = now();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'code' => 'required|max:6',
+            ],
+            [
+                'code.required' => 'El codigo es requerido',
+                'code.max' => 'Codigo incorrecto',
+            ]
+        );
+        if($validator->fails()) {
+            Log::channel('errors')->info('Informacion: Alguien intento iniciar como administrador Error: validaciones' . ' Fecha:('.$time.')');
+            return response()->json(['error' => $validator->errors()], 422);
+        } else {
+            $user = User::find(1);
+            if($user){
+                if(Hash::check($request->code,$user->second_factory_token_admin)){
+                    Log::channel('infos')->info('Informacion: Un usuario administrador inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                    $user->second_factory_token_admin = null;
+                    $verificationCode = mt_rand(100000, 999999);
+                    $user->second_factory_token = Hash::make($verificationCode); 
+                    $user->save();
+                    Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
+                    ->onQueue('email')
+                    ->onConnection('database')
+                    ->delay(now()->addSeconds(10));
+                    return response()->json([
+                        'message' => ' Usuario administrador verficado 1'
+                    ], 201);    
+                } else {
+                    Log::channel('errors')->info('Informacion: Alguien intento iniciar como administrador Error: Codigo equivocado' . ' Fecha:('.$time.')');
+                    return response()->json([
+                        'error' => 'Codigo incorrecto'
+                    ], 400);    
+                }
+            } else {
+                Log::channel('errors')->info('Informacion: Alguien intento iniciar como administrador Error: Usuario sin permiso' . ' Fecha:('.$time.')');
+                return response()->json([
+                    'error' => 'No tienes permiso'
+                ], 400);
+            }
         }
     }
 }

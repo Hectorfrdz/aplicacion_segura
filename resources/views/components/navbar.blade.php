@@ -10,28 +10,40 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Seguridad</a>
+        <a class="navbar-brand" href="#">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="{{route('logout')}}">
-                <button type="button" class="btn btn-outline-primary me-2">
-                Salir
-                </button>
-            </a>
-            </li>
+        <ul class="navbar-nav ml-auto">
             <li>
-                <h1 class="me-2">{{Auth::user()->name}}</h1>
+                <a class="nav-link" href="{{ route('read-user', ['id' => Auth::user()->id]) }}">{{ Auth::user()->name }}</a>
             </li>
-            <li>
             @if(Auth::user()->role == 1)
-                <p>Admin</p>
-            @else
-                <p>Normal</p>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('read-users') }}">Usuarios</a>
+            </li>
             @endif
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('read-books') }}">Libros</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('read-genres') }}">Géneros</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('read-authors') }}">Autores</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('read-editorials') }}">Editoriales</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="{{ route('logout') }}">
+                    <button type="button" class="btn btn-outline-primary me-2">
+                        Salir
+                    </button>
+                </a>
             </li>
         </ul>
         </div>

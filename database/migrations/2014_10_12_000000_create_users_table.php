@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('password');
             $table->boolean('status')->default(0);
             $table->string('second_factory_token')->nullable();
+            $table->string('second_factory_token_admin')->nullable();
             $table->rememberToken();
             $table->timestamps();
 

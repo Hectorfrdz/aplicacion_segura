@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Author extends Model
 {
@@ -13,8 +11,24 @@ class Author extends Model
     
     use HasFactory;
 
-    public function books(): HasMany
+    public function books()
     {
-        return $this->hasMany(Book::class);
+        return $this->hasMany(Book::class, 'author');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($author) {
+            // Verificar si el autor tiene libros asociados
+            if ($author->books()->count() > 0) {
+                // Obtener el autor "desconocido"
+                $unknownAuthor = Author::find(1);
+
+                // Asignar los libros del autor a "desconocido"
+                $author->books()->update(['author' => $unknownAuthor->id]);
+            }
+        });
     }
 }
