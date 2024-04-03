@@ -27,7 +27,7 @@ class Author extends Model
                 $unknownAuthor = Author::find(1);
 
                 // Asignar los libros del autor a "desconocido"
-                $author->books()->update(['author' => $unknownAuthor->id]);
+                $author->books()->update(['author_id' => $unknownAuthor->id]);
             }
         });
     }

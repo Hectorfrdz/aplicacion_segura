@@ -27,7 +27,7 @@ class Editorial extends Model
                 $unknownEditorial = Editorial::find(1);
 
                 // Asignar los libros del autor a "desconocido"
-                $editorial->books()->update(['editorial' => $unknownEditorial->id]);
+                $editorial->books()->update(['editorial_id' => $unknownEditorial->id]);
             }
         });
     }
