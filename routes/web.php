@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\UserController;
+use App\Models\Author;
+use App\Models\Book;
+use App\Models\Editorial;
+use App\Models\Genre;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -34,3 +40,30 @@ Route::get('/verificarCodigo', function () {
     return view('verificarCodigo');
 })->name('verificarCodigo');
 
+Route::get('/books', function () {
+    $books = Book::with('genre', 'editorial', 'author')->simplePaginate(10);
+    $authors = Author::all();
+    $editorials = Editorial::all();
+    $genres = Genre::all();
+    return view('books', compact('books','authors','editorials','genres'));
+})->name('books')->middleware('auth:sanctum');
+
+Route::get('/users', function () {
+    $users = User::all();
+    return view('users', compact('users'));
+})->name('users')->middleware('auth:sanctum')->middleware("checkRole:1");
+
+Route::get('/authors', function () {
+    $authors = Author::simplePaginate(10);
+    return view('authors', compact('authors'));
+})->name('authors')->middleware('auth:sanctum');
+
+Route::get('/genres', function () {
+    $genres = Genre::simplePaginate(10);
+    return view('genres', compact('genres'));
+})->name('genres')->middleware('auth:sanctum');
+
+Route::get('/editorials', function () {
+    $editorials = Editorial::simplePaginate(10);
+    return view('editorials', compact('editorials'));
+})->name('editorials')->middleware('auth:sanctum');

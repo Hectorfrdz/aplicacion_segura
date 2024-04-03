@@ -7,6 +7,8 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     
     <title>Correo Validado</title>
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body>
     <div style="text-align: center; padding: 50px;">
