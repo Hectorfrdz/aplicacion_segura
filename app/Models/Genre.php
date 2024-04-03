@@ -27,7 +27,7 @@ class Genre extends Model
                 $unknownGenre = Genre::find(1);
 
                 // Asignar los libros del autor a "desconocido"
-                $genre->books()->update(['genre' => $unknownGenre->id]);
+                $genre->books()->update(['genre_id' => $unknownGenre->id]);
             }
         });
     }
