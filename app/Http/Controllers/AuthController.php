@@ -272,7 +272,7 @@ class AuthController extends Controller
             $verificationCode = mt_rand(100000, 999999);
             $user->second_factory_token = $verificationCode; 
             $user->save();
-            Verificacion_Dos_Pasos::dispatch($user)
+            Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
             ->onQueue('email')
             ->onConnection('database')
             ->delay(now()->addSeconds(10));
