@@ -65,7 +65,7 @@ class AuthController extends Controller
                     $user->role = 1;
                 } else {
                     // Si hay le da el rol de usuario comun
-                    $user->role = 2;
+                    $user->role = 3;
                 }
                 // Guardar al usuario 
                 if($user->save()){
@@ -125,35 +125,35 @@ class AuthController extends Controller
                 $user = User::where('email','=',$request->email)->first();
                 if($user && Hash::check($request->password,$user->password)){
                     if($user->status != 0){
-                        $verificationCode = mt_rand(100000, 999999);
-                        $user->second_factory_token = Hash::make($verificationCode); 
-                        $user->save();
-                        $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
-                        Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
-                        ->onQueue('email')
-                        ->onConnection('database')
-                        ->delay(now()->addSeconds(10));
-                        // if($user->role != 1){
-                        //     Log::channel('infos')->info('Informacion: Un usuario esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
-                        //     $verificationCode = mt_rand(100000, 999999);
-                        //     $user->second_factory_token = Hash::make($verificationCode); 
-                        //     $user->save();
-                        //     $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
-                        //     Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
-                        //     ->onQueue('email')
-                        //     ->onConnection('database')
-                        //     ->delay(now()->addSeconds(10));
-                        // } else {
-                        //     Log::channel('infos')->info('Informacion: Un usuario administrador esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
-                        //     $verificationCode = mt_rand(100000, 999999);
-                        //     $user->second_factory_token_admin = Hash::make($verificationCode); 
-                        //     $user->save();
-                        //     $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
-                        //     verificacion_dos_pasos_admin::dispatch($user,$verificationCode)
-                        //     ->onQueue('email')
-                        //     ->onConnection('database')
-                        //     ->delay(now()->addSeconds(10));
-                        // }
+                        // $verificationCode = mt_rand(100000, 999999);
+                        // $user->second_factory_token = Hash::make($verificationCode); 
+                        // $user->save();
+                        // $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
+                        // Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
+                        // ->onQueue('email')
+                        // ->onConnection('database')
+                        // ->delay(now()->addSeconds(10));
+                        if($user->role != 1){
+                            Log::channel('infos')->info('Informacion: Un usuario esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                            $verificationCode = mt_rand(100000, 999999);
+                            $user->second_factory_token = Hash::make($verificationCode); 
+                            $user->save();
+                            $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
+                            Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
+                            ->onQueue('email')
+                            ->onConnection('database')
+                            ->delay(now()->addSeconds(10));
+                        } else {
+                            Log::channel('infos')->info('Informacion: Un usuario administrador esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                            $verificationCode = mt_rand(100000, 999999);
+                            $user->second_factory_token_admin = Hash::make($verificationCode); 
+                            $user->save();
+                            $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
+                            verificacion_dos_pasos_admin::dispatch($user,$verificationCode)
+                            ->onQueue('email')
+                            ->onConnection('database')
+                            ->delay(now()->addSeconds(10));
+                        }
                         return response()->json([
                             'message' => ' Usuario logeado con éxito',
                             'url' => $url
