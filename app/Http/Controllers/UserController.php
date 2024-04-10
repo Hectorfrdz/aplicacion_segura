@@ -102,7 +102,7 @@ class UserController extends Controller
                 $user->name = $request->name;
                 $user->email = $request->email;
                 $user->role = $request->role;
-                $user->status = 1;
+                $user->status = $request->status;
                 // Guardar al usuario 
                 if($user->save()){
                     return response()->json([

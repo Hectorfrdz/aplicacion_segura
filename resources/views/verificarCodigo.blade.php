@@ -44,11 +44,6 @@
                                 </div>
                             </div>
                         </form>
-                        <br>
-                        <div id="app" style="display: flex;" class="row mb-0">
-                            <button id="reenviar-btn" class="btn btn-warning col-md-6 offset-md-3" data-id="{{ request()->query('user') }}" disabled>Reenviar código</button>
-                            <p class="col-md-2"><span id="countdown">50</span></p>
-                        </div>
                     </div>
                 </div>
             </div>
