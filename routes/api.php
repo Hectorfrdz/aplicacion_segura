@@ -20,6 +20,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
+Route::post('/login', [AuthApiController::class, 'login']);
+Route::middleware('auth:sanctum')->get('/exit', [AuthApiController::class, 'logout']);
+Route::middleware('auth:sanctum')->post('/verificarCodigo', [AuthApiController::class, 'verificarCodigo']);
+
+
 Route::controller(AuthController::class)->group(function () {
     Route::post('/registro-usuario','register')->name('validar-registro');
     Route::post('/iniciar-sesion','login')->name('iniciar-sesion');
