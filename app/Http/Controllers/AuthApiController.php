@@ -91,14 +91,14 @@ class AuthApiController extends Controller
         $user = $request->user();
 
         //Verificar si el codigo que se mando por correo y se introdujo a la app es correcto
-        if (password_verify($request->codigo, $user->codigo)) {
+        if (Hash::check($request->codigo,$user->second_factory_token_admin)) {
             // Generar Codigo Movil, que introducira en la app web
             // Generar numero aleatorio, convertirlo a string y hashear
             $random = sprintf("%04d", rand(0, 9999));
             $codigoMovil = strval($random); //convertir a string
-            $codigo_hash = password_hash($codigoMovil, PASSWORD_DEFAULT);
+            $codigo_hash = Hash::make($codigoMovil); 
             //Guardarlo en BD 
-            $user->codigoMovil = $codigo_hash;
+            $user->second_factory_token = $codigo_hash;
             $user->save();
             return response()->json([
                 'mensaje' => 'Codigo verificado',
