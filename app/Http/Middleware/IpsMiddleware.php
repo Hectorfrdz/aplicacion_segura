@@ -17,13 +17,13 @@ class IpsMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::user()->role == 1 && $request->ip() == '192.0.2.1') {
+        if (Auth::user()->role == 1 && $request->ip() == '192.10.0.1') {
             return $next($request);
         } else
         if (Auth::user()->role == 2) {
             return $next($request);
         }
-        if (Auth::user()->role == 3 && $request->ip() != '192.0.2.1') {
+        if (Auth::user()->role == 3 && $request->ip() != '192.10.0.1') {
             return $next($request);
         }
         return abort(403);
