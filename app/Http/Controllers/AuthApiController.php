@@ -45,7 +45,7 @@ class AuthApiController extends Controller
         }
 
         //Regresar si el usuario no es admin    
-        if (!$user->hasRole('admin')) {
+        if (!$user->role != 1) {
             return response()->json([
                 'mensaje' => 'Acceso denegado',
                 'success' => false
