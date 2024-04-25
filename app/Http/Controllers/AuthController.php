@@ -134,19 +134,19 @@ class AuthController extends Controller
                         // ->onConnection('database')
                         // ->delay(now()->addSeconds(10));
                         if($user->role != 1){
-                            Auth::login($user);
-                            return response()->json([
-                                'message' => ' Usuario logeado con éxito'
-                            ],201);
-                            // Log::channel('infos')->info('Informacion: Un usuario esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
-                            // $verificationCode = mt_rand(100000, 999999);
-                            // $user->second_factory_token = Hash::make($verificationCode); 
-                            // $user->save();
-                            // $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
-                            // Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
-                            // ->onQueue('email')
-                            // ->onConnection('database')
-                            // ->delay(now()->addSeconds(10));
+                            // Auth::login($user);
+                            // return response()->json([
+                            //     'message' => ' Usuario logeado con éxito'
+                            // ],201);
+                            Log::channel('infos')->info('Informacion: Un usuario esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
+                            $verificationCode = mt_rand(100000, 999999);
+                            $user->second_factory_token = Hash::make($verificationCode); 
+                            $user->save();
+                            $url = URL::temporarySignedRoute('verificarCodigo', now()->addMinutes(10), ['user' => $user->id]);
+                            Verificacion_Dos_Pasos::dispatch($user,$verificationCode)
+                            ->onQueue('email')
+                            ->onConnection('database')
+                            ->delay(now()->addSeconds(10));
                         } else {
                             Log::channel('infos')->info('Informacion: Un usuario administrador esta intentando iniciar sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
                             $verificationCode = mt_rand(100000, 999999);

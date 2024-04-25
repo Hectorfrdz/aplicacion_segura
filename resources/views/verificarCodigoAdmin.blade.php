@@ -17,7 +17,7 @@
                         Confirmación de Código
                     </div>
                     <div class="card-body">
-                        <p>Codigo de verificacion:</p>
+                        <p>Codigo de verificacion, Verificalo en app movil:</p>
                         <h2 class="text-center text-danger">{{ $verificationCode }}</h2>
                     </div>
                 </div>
