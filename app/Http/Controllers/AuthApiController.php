@@ -24,6 +24,7 @@ class AuthApiController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
+            'code' => 'required'
         ]);
 
         //retornar errores
@@ -46,16 +47,33 @@ class AuthApiController extends Controller
 
         //Regresar si el usuario no es admin    
         if ($user->role != 1) {
+            
             return response()->json([
                 'mensaje' => 'Acceso denegado',
                 'success' => false
             ], 401);
         }
 
+        if(!Hash::check($request->code,$user->second_factory_token_admin)){
+            return response()->json([
+                'mensaje' => 'Codigo invalido',
+                'success' => false
+            ], 401);
+        }
+
+        $random = sprintf("%04d", rand(0, 9999));
+        $codigoMovil = strval($random); //convertir a string
+        $codigo_hash = Hash::make($codigoMovil); 
+        //Guardarlo en BD 
+        $user->second_factory_token = $codigo_hash;
+        $user->save();
+
+
         return response()->json([
             'mensaje' => 'logeado',
             'user' => $user,
             'token' => $user->createToken('token')->plainTextToken,
+            'codigoMovil' => $codigo_hash,
             'success' => true
         ], 200);
     }
