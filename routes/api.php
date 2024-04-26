@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('/login', [AuthApiController::class, 'login']);
+Route::middleware('auth:sanctum')->post('/newCode', [AuthApiController::class, 'generateNewCode']);
 Route::middleware('auth:sanctum')->get('/exit', [AuthApiController::class, 'logout']);
 Route::middleware('auth:sanctum')->post('/verificarCodigo', [AuthApiController::class, 'verificarCodigo']);
 

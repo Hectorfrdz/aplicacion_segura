@@ -73,12 +73,36 @@ class AuthApiController extends Controller
             'mensaje' => 'logeado',
             'user' => $user,
             'token' => $user->createToken('token')->plainTextToken,
-            'codigoMovil' => $codigo_hash,
+            'codigoMovil' => $codigoMovil,
             'success' => true
         ], 200);
     }
 
-    public function Logout(Request $request)
+    public function generateNewCode(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        $random = sprintf("%04d", rand(0, 9999));
+        $codigoMovil = strval($random); 
+        $codigo_hash = Hash::make($codigoMovil); 
+        //Guardarlo en BD 
+        $user->second_factory_token = $codigo_hash;
+        $user->save();
+
+        return response()->json([
+            'mensaje' => 'Codigo generado',
+            'codigoMovil' => $codigoMovil,
+            'success' => true
+        ], 200);
+
+
+
+    }
+
+    public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
 
