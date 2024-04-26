@@ -83,21 +83,29 @@ class AuthApiController extends Controller
             'email' => 'required|email',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        try{
+            $user = User::where('email', $request->email)->first();
 
-        $random = sprintf("%04d", rand(0, 9999));
-        $codigoMovil = strval($random); 
-        $codigo_hash = Hash::make($codigoMovil); 
-        //Guardarlo en BD 
-        $user->second_factory_token = $codigo_hash;
-        $user->save();
-
-        return response()->json([
-            'mensaje' => 'Codigo generado',
-            'codigoMovil' => $codigoMovil,
-            'success' => true
-        ], 200);
-
+        
+            $random = sprintf("%04d", rand(0, 9999));
+            $codigoMovil = strval($random); 
+            $codigo_hash = Hash::make($codigoMovil); 
+            //Guardarlo en BD 
+            $user->second_factory_token = $codigo_hash;
+            $user->save();
+    
+            return response()->json([
+                'mensaje' => 'Codigo generado',
+                'codigoMovil' => $codigoMovil,
+                'success' => true
+            ], 200);
+    
+    
+        }catch(Exception $e){
+            return response()->json([
+                'mensaje' => 'Error al generar codigo',
+            ] ,500);
+        }
 
 
     }
