@@ -308,7 +308,7 @@ class AuthController extends Controller
         } else {
             $user = User::find(1);
             if($user){
-                if(Hash::check($request->code,$user->second_factory_token_admin)){
+                if(Hash::check($request->code,$user->second_factory_token)){
                     Log::channel('infos')->info('Informacion: Un usuario administrador inicio sesion' . ' Usuario: '. $user . ' Fecha:('.$time.')');
                     $user->second_factory_token_admin = null;
                     $verificationCode = mt_rand(100000, 999999);
